@@ -40,25 +40,20 @@ export default function AdminDashboard() {
           setIsAuthenticated(!!user);
           setIsLoadingAuth(false);
 
-          if (user && db) {
+          if (user && firestore) {
             try {
-              const ordersRef = ref(db, 'orders');
-              unsubscribeOrders = onValue(ordersRef, snap => {
-                const data = snap.val();
-                if (data) {
-                  const items = Object.keys(data).map(key => ({
-                    ...data[key],
-                    dbKey: key,
-                    displayId: data[key].id || key
-                  }));
-                  setOrders(items.sort((a: any, b: any) => {
-                    const d1 = b.created_at ? new Date(b.created_at).getTime() : 0;
-                    const d2 = a.created_at ? new Date(a.created_at).getTime() : 0;
-                    return d1 - d2;
-                  }));
-                } else {
-                  setOrders([]);
-                }
+              const ordersRef = collection(firestore, 'orders');
+              unsubscribeOrders = onSnapshot(ordersRef, (snap) => {
+                const items = snap.docs.map(docSnap => ({
+                  ...docSnap.data(),
+                  dbKey: docSnap.id,
+                  displayId: docSnap.data().orderId || docSnap.id
+                }));
+                setOrders(items.sort((a: any, b: any) => {
+                  const d1 = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                  const d2 = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                  return d1 - d2;
+                }));
               }, error => {
                 console.warn("Orders error:", error);
               });
@@ -121,11 +116,11 @@ export default function AdminDashboard() {
 
   const handleUpdateOrderStatus = async (dbKey: string, newStatus: string) => {
     try {
-      if (!db) throw new Error("Firebase DB not initialized");
+      if (!firestore) throw new Error("Firestore not initialized");
       
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Database is unreachable.")), 5000));
       await Promise.race([
-        update(ref(db, `orders/${dbKey}`), { status: newStatus }),
+        updateDoc(doc(firestore, 'orders', dbKey), { status: newStatus }),
         timeoutPromise
       ]);
       toast.success(`Order updated`);
@@ -153,10 +148,10 @@ export default function AdminDashboard() {
 
   const handleDeleteOrder = async (dbKey: string) => {
     try {
-      if (!db) throw new Error("Firebase DB not initialized");
+      if (!firestore) throw new Error("Firestore not initialized");
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout: Database is unreachable.")), 5000));
       await Promise.race([
-        removeDb(ref(db, `orders/${dbKey}`)),
+        deleteDoc(doc(firestore, 'orders', dbKey)),
         timeoutPromise
       ]);
       toast.success(`Order deleted`);
@@ -329,12 +324,12 @@ export default function AdminDashboard() {
                             {order.status}
                           </span>
                           <span className="text-neutral-500 text-xs">
-                            {order.created_at ? formatDistanceToNow(new Date(order.created_at), { addSuffix: true }) : 'Just now'}
+                            {order.createdAt ? formatDistanceToNow(new Date(order.createdAt), { addSuffix: true }) : 'Just now'}
                           </span>
                         </div>
-                        <h3 className="text-lg text-white font-bold">{order.customer_name}</h3>
+                        <h3 className="text-lg text-white font-bold">{order.customerName}</h3>
                         <p className="text-neutral-400 text-sm mt-1">
-                          {order.items?.length || 0} items • <span className="text-orange-400">₹{order.total_price}</span>
+                          {order.items?.length || 0} items • <span className="text-orange-400">₹{order.total}</span>
                         </p>
                         <div className="mt-4 space-y-1">
                           {order.items?.map((item: any, i: number) => (

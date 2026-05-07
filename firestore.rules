@@ -6,14 +6,20 @@ service cloud.firestore {
       return request.auth != null && data.userId == request.auth.uid;
     }
 
+    function isAdmin() {
+      // In a real app, use custom claims or an admin collection.
+      // For this demo, allow access based on a specific email.
+      return request.auth != null && request.auth.token.email == 'admin@barbequenation.com';
+    }
+
     match /orders/{document} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if isOwner(resource.data);
+      allow read, update, delete: if isOwner(resource.data) || isAdmin();
     }
     
     match /bookings/{document} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read, update, delete: if isOwner(resource.data);
+      allow read, update, delete: if isOwner(resource.data) || isAdmin();
     }
 
     match /users/{userId} {
