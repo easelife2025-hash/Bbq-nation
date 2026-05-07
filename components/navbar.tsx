@@ -80,13 +80,13 @@ export function Navbar() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={signInWithGoogle}
+              <Link
+                href="/login"
                 className="flex items-center gap-2 px-4 py-2 bg-neutral-900 border border-neutral-800 hover:border-orange-500/50 text-neutral-300 hover:text-white text-xs font-bold tracking-wider uppercase rounded-sm transition-all duration-300"
               >
                 <LogIn className="w-4 h-4" />
                 Login
-              </button>
+              </Link>
             )}
 
             <Link
@@ -147,16 +147,14 @@ export function Navbar() {
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => {
-                    signInWithGoogle();
-                    setIsOpen(false);
-                  }}
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center gap-2 py-3 bg-neutral-900 border border-neutral-800 text-white text-sm font-bold tracking-widest uppercase rounded-sm"
                 >
                   <LogIn className="w-4 h-4" />
                   Login
-                </button>
+                </Link>
               )
             )}
 

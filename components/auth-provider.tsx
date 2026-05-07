@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, firestore } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -29,8 +30,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      
+      // Store user safely in firestore on login
+      if (user && firestore) {
+        try {
+          const userRef = doc(firestore, 'users', user.uid);
+          await setDoc(userRef, {
+            email: user.email,
+            uid: user.uid,
+            lastLoginAt: new Date().toISOString(),
+          }, { merge: true });
+        } catch (error) {
+          console.error("Error storing user in Firestore:", error);
+        }
+      }
+      
       setLoading(false);
     });
 
@@ -51,6 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         console.error('Error signing in with Google', error);
       }
+      throw error;
     }
   };
 
