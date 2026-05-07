@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Common auth check
+    function isOwner(data) {
+      return request.auth != null && data.userId == request.auth.uid;
+    }
+
+    match /orders/{document} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isOwner(resource.data);
+    }
+    
+    match /bookings/{document} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isOwner(resource.data);
+    }
+  }
+}
