@@ -9,6 +9,8 @@ import { firestore } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { useAuth } from '@/components/auth-provider';
 
+import Link from 'next/link';
+
 interface BookingFormData {
   name: string;
   phone: string;
@@ -158,12 +160,12 @@ export default function BookTablePage() {
               <p className="text-neutral-400 text-lg mb-8">
                 To reserve a table, please log in or create an account with us.
               </p>
-              <button
-                onClick={signInWithGoogle}
-                className="px-8 py-4 w-full sm:w-auto bg-orange-600 hover:bg-orange-500 text-white font-bold tracking-widest uppercase rounded-sm transition-all duration-300 shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+              <Link
+                href="/login?redirect=/book"
+                className="inline-block px-8 py-4 w-full sm:w-auto bg-orange-600 hover:bg-orange-500 text-white font-bold tracking-widest uppercase rounded-sm transition-all duration-300 shadow-[0_0_20px_rgba(234,88,12,0.4)]"
               >
-                Log In with Google
-              </button>
+                Log In to Continue
+              </Link>
             </div>
           </motion.div>
         ) : (

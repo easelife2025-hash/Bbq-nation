@@ -7,6 +7,8 @@ import { useAuth } from '@/components/auth-provider';
 import { firestore } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
+import Link from 'next/link';
+
 export default function MyUpdatesPage() {
   const { user, loading: authLoading, signInWithGoogle } = useAuth();
   const [activeTab, setActiveTab] = useState<'bookings' | 'orders'>('bookings');
@@ -86,12 +88,12 @@ export default function MyUpdatesPage() {
           <p className="text-neutral-400 text-lg mb-8">
             Please log in to view and track your table bookings and food orders.
           </p>
-          <button
-            onClick={signInWithGoogle}
-            className="px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold tracking-widest uppercase rounded-sm transition-all duration-300 shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+          <Link
+            href="/login?redirect=/my-updates"
+            className="inline-block px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold tracking-widest uppercase rounded-sm transition-all duration-300 shadow-[0_0_20px_rgba(234,88,12,0.4)]"
           >
-            Log In with Google
-          </button>
+            Log In to Continue
+          </Link>
         </div>
       </div>
     );

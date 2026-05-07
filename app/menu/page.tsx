@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -144,12 +145,14 @@ export default function MenuPage() {
 
   const cartTotal = cart.reduce((total, item) => total + (item.numericPrice * item.quantity), 0);
 
+  const router = useRouter();
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       toast.error("You must be logged in to order.");
       setIsCartOpen(false);
-      signInWithGoogle();
+      router.push('/login?redirect=/menu');
       return;
     }
 
