@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Flame, Instagram, Facebook, Twitter, MapPin, Phone, Mail } from 'lucide-react';
+import { Flame, Camera, Globe, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -18,13 +18,13 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-400 hover:bg-orange-600 hover:text-white transition-all duration-300">
-                <Instagram className="w-4 h-4" />
+                <Camera className="w-4 h-4" />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-400 hover:bg-orange-600 hover:text-white transition-all duration-300">
-                <Facebook className="w-4 h-4" />
+                <Globe className="w-4 h-4" />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-neutral-400 hover:bg-orange-600 hover:text-white transition-all duration-300">
-                <Twitter className="w-4 h-4" />
+                <MessageCircle className="w-4 h-4" />
               </a>
             </div>
           </div>
